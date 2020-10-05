@@ -8,14 +8,16 @@ CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
 
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1,
+    'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
 }
-
+#TOTAL_SCORE = 0
 # -----------------------------------
 # Helper code
 # (you don't need to understand this helper code)
 
 WORDLIST_FILENAME = "words.txt"
+
 
 def loadWords():
     """
@@ -34,6 +36,7 @@ def loadWords():
     print("  ", len(wordList), "words loaded.")
     return wordList
 
+
 def getFrequencyDict(sequence):
     """
     Returns a dictionary where the keys are elements of the sequence
@@ -46,9 +49,9 @@ def getFrequencyDict(sequence):
     # freqs: dictionary (element_type -> int)
     freq = {}
     for x in sequence:
-        freq[x] = freq.get(x,0) + 1
+        freq[x] = freq.get(x, 0) + 1
     return freq
-	
+
 
 # (end of helper code)
 # -----------------------------------
@@ -86,7 +89,6 @@ def getWordScore(word, n):
         return totalscore
 
 
-
 #
 # Problem #2: Make sure you understand how this function works and what it does!
 #
@@ -104,8 +106,9 @@ def displayHand(hand):
     """
     for letter in hand.keys():
         for j in range(hand[letter]):
-             print(letter,end=" ")       # print all on the same line
-    print()                             # print an empty line
+            print(letter, end=" ")  # print all on the same line
+    print()  # print an empty line
+
 
 #
 # Problem #2: Make sure you understand how this function works and what it does!
@@ -122,18 +125,19 @@ def dealHand(n):
     n: int >= 0
     returns: dictionary (string -> int)
     """
-    hand={}
+    hand = {}
     numVowels = n // 3
-    
+
     for i in range(numVowels):
-        x = VOWELS[random.randrange(0,len(VOWELS))]
+        x = VOWELS[random.randrange(0, len(VOWELS))]
         hand[x] = hand.get(x, 0) + 1
-        
-    for i in range(numVowels, n):    
-        x = CONSONANTS[random.randrange(0,len(CONSONANTS))]
+
+    for i in range(numVowels, n):
+        x = CONSONANTS[random.randrange(0, len(CONSONANTS))]
         hand[x] = hand.get(x, 0) + 1
-        
+
     return hand
+
 
 #
 # Problem #2: Update a hand by removing letters
@@ -161,9 +165,6 @@ def updateHand(hand, word):
         assert return_hand[letter] > 0, 'letter {} not in word {}'.format(letter, word)
         return_hand[letter] -= 1
     return return_hand
-
-
-
 
 
 #
@@ -194,6 +195,7 @@ def isValidWord(word, hand, wordList):
     else:
         return False
 
+
 #
 # Problem #4: Playing a hand
 #
@@ -205,8 +207,8 @@ def calculateHandlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    # TO DO... <-- Remove this comment when you code this function
-
+    assert type(hand) == dict, 'calculateHandlen, {} is not dictionary'.format(hand)
+    return sum(hand.values())
 
 
 def playHand(hand, wordList, n):
@@ -231,36 +233,39 @@ def playHand(hand, wordList, n):
       n: integer (HAND_SIZE; i.e., hand size required for additional points)
       
     """
-    # BEGIN PSEUDOCODE <-- Remove this comment when you code this function; do your coding within the pseudocode (leaving those comments in-place!)
+
     # Keep track of the total score
-    
+    total_score = 0
     # As long as there are still letters left in the hand:
-    
-        # Display the hand
-        
-        # Ask user for input
-        
-        # If the input is a single period:
-        
-            # End the game (break out of the loop)
-
-            
-        # Otherwise (the input is not a single period):
-        
-            # If the word is not valid:
-            
-                # Reject invalid word (print a message followed by a blank line)
-
-            # Otherwise (the word is valid):
-
-                # Tell the user how many points the word earned, and the updated total score, in one line followed by a blank line
-                
-                # Update the hand 
-                
-
+    while calculateHandlen(hand) > 0:
+    # Display the hand
+        displayHand(hand)
+    # Ask user for input
+        users_word = input('Enter word, or a "." to indicate that you are finished:')
+        assert users_word.islower() or users_word == '.', 'playHand, {} is not lowercase string'.format(users_word)
+    # If the input is a single period:
+        if users_word == '.':
+    # End the game (break out of the loop)
+            first_word = 'Goodbye!'
+            break
+    # Otherwise (the input is not a single period):
+        else:
+    # If the word is not valid:
+            if not isValidWord(users_word, hand, wordList):
+    # Reject invalid word (print a message followed by a blank line)
+                print('Invalid word, please try again.\n')
+    # Otherwise (the word is valid):
+            else:
+    # Tell the user how many points the word earned, and the updated total score, in one line followed by a blank line
+                current_score = getWordScore(users_word, n)
+                total_score += current_score
+                print('"{}" earned {} points. Total: {} points'.format(users_word, current_score, total_score))
+    # Update the hand
+                updateHand(hand, users_word)
     # Game is over (user entered a '.' or ran out of letters), so tell user the total score
-
-
+    else:
+        first_word = 'Run out of letters.'
+    print('{} Total score: {} points.'.format(first_word, total_score))
 #
 # Problem #5: Playing a game
 # 
@@ -278,9 +283,7 @@ def playGame(wordList):
     2) When done playing the hand, repeat from step 1    
     """
     # TO DO ... <-- Remove this comment when you code this function
-    print("playGame not yet implemented.") # <-- Remove this line when you code the function
-   
-
+    print("playGame not yet implemented.")  # <-- Remove this line when you code the function
 
 
 #

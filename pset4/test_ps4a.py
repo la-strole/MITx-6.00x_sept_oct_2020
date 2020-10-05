@@ -185,6 +185,11 @@ def test_isValidWord(wordList):
     if not failure:
         print("SUCCESS: test_isValidWord()")
 
+def test_play_Hand():
+    """
+    unit test for playHand
+    """
+    hand =
 
 wordList = loadWords()
 print("----------------------------------------------------------------------")
@@ -198,3 +203,5 @@ print("Testing isValidWord...")
 test_isValidWord(wordList)
 print("----------------------------------------------------------------------")
 print("All done!")
+
+hand = dial
