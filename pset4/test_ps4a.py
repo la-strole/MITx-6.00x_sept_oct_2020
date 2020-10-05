@@ -185,11 +185,23 @@ def test_isValidWord(wordList):
     if not failure:
         print("SUCCESS: test_isValidWord()")
 
-def test_play_Hand():
+def test_play_Hand(wordList):
     """
     unit test for playHand
     """
-    hand =
+    n = 7
+    hand = [{'h':1, 'i':1, 'c':1, 'z':1, 'm':2, 'a':1}, {'w':1, 's':1, 't':2, 'a':1, 'o':1, 'f':1},
+            {'n':1, 'e':1, 't':1, 'a':1, 'r':1, 'i':2}]
+    #users_choises = (('him', 'cam', '.'), ('tow', 'tasf', 'fast'), ('inertia'.)
+    for item in hand:
+        playHand(item, wordList, n)
+
+
+def test_play_Game(wordList):
+    """
+    unit test for playGame
+    """
+    playGame(wordList)
 
 wordList = loadWords()
 print("----------------------------------------------------------------------")
@@ -204,4 +216,5 @@ test_isValidWord(wordList)
 print("----------------------------------------------------------------------")
 print("All done!")
 
-hand = dial
+#test_play_Hand(wordList)
+test_play_Game(wordList)

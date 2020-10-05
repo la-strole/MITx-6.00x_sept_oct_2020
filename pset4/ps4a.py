@@ -11,7 +11,7 @@ SCRABBLE_LETTER_VALUES = {
     'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1,
     'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
 }
-#TOTAL_SCORE = 0
+# TOTAL_SCORE = 0
 # -----------------------------------
 # Helper code
 # (you don't need to understand this helper code)
@@ -238,34 +238,37 @@ def playHand(hand, wordList, n):
     total_score = 0
     # As long as there are still letters left in the hand:
     while calculateHandlen(hand) > 0:
-    # Display the hand
+        # Display the hand
+        print('Current Hand: ', end='')
         displayHand(hand)
-    # Ask user for input
-        users_word = input('Enter word, or a "." to indicate that you are finished:')
+        # Ask user for input
+        users_word = input('Enter word, or a "." to indicate that you are finished: ')
         assert users_word.islower() or users_word == '.', 'playHand, {} is not lowercase string'.format(users_word)
-    # If the input is a single period:
+        # If the input is a single period:
         if users_word == '.':
-    # End the game (break out of the loop)
+            # End the game (break out of the loop)
             first_word = 'Goodbye!'
             break
-    # Otherwise (the input is not a single period):
+        # Otherwise (the input is not a single period):
         else:
-    # If the word is not valid:
+            # If the word is not valid:
             if not isValidWord(users_word, hand, wordList):
-    # Reject invalid word (print a message followed by a blank line)
+                # Reject invalid word (print a message followed by a blank line)
                 print('Invalid word, please try again.\n')
-    # Otherwise (the word is valid):
+            # Otherwise (the word is valid):
             else:
-    # Tell the user how many points the word earned, and the updated total score, in one line followed by a blank line
+                # Tell the user how many points the word earned, and the updated total score, in one line followed by a blank line
                 current_score = getWordScore(users_word, n)
                 total_score += current_score
-                print('"{}" earned {} points. Total: {} points'.format(users_word, current_score, total_score))
-    # Update the hand
-                updateHand(hand, users_word)
+                print('"{}" earned {} points. Total: {} points\n'.format(users_word, current_score, total_score))
+                # Update the hand
+                hand = updateHand(hand, users_word)
     # Game is over (user entered a '.' or ran out of letters), so tell user the total score
     else:
         first_word = 'Run out of letters.'
-    print('{} Total score: {} points.'.format(first_word, total_score))
+    print('{} Total score: {} points.\n'.format(first_word, total_score))
+
+
 #
 # Problem #5: Playing a game
 # 
@@ -282,8 +285,27 @@ def playGame(wordList):
  
     2) When done playing the hand, repeat from step 1    
     """
-    # TO DO ... <-- Remove this comment when you code this function
-    print("playGame not yet implemented.")  # <-- Remove this line when you code the function
+
+    first_time_flag = True
+    while True:  # main loop
+        while True:  # user's choise loop
+            choise = input("Enter n to deal a new hand, r to replay the last hand, or e to end game: ")
+            if choise in ('n', 'e'):
+                break  # user's choise loop
+            elif choise == 'r':
+                if not first_time_flag:
+                    break  # user's choise loop
+                else:
+                    print('You have not played a hand yet. Please play a new hand first!\n')
+            else:
+                print('Invalid command.')
+        if choise == 'e':  # exit game
+            break  # main loop
+        elif choise == 'n':  # new hand
+            hand = dealHand(HAND_SIZE)
+        first_time_flag = False
+        playHand(hand, wordList, HAND_SIZE)
+
 
 
 #
