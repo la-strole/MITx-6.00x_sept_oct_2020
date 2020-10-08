@@ -1,15 +1,18 @@
-class Coordinate(object):
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+def prinme_gen():
+    yield 1
+    yield 2
+    yield 3
+    primes = [2, 3]
+    number = 5
+    while True:
+        for item in primes:
+            if item ** 2 <= number:
+                if number % item == 0:
+                    number += 2
+                    break # for loop
+            else:
+                primes.append(number)
+                yield number
+                number += 2
+                break
 
-    def ret_xy(self):
-        return self.x, self.y
-
-    def __repr__(self):
-        return f'Coordinate({self.x}, {self.y})'
-
-    def __str__(self):
-        return f'x={self.x}, y={self.y}'
-
-    @len
