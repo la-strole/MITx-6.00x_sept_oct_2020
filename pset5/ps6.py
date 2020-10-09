@@ -162,9 +162,9 @@ class PlaintextMessage(Message):
         '''
         self.text = text
         self.shift = shift
-        self.encrypting_dict = self.build_shift_dict(self.shift)
         assert type(shift) == int, 'typeerror of shift={} is no integer, is {}'.format(shift, type(shift))
         assert 0 <= shift < 26, 'shift={} is not in valid range'.format(shift)
+        self.encrypting_dict = self.build_shift_dict(self.shift)
         Message.__init__(self, self.text)
 
 
@@ -221,7 +221,9 @@ class CiphertextMessage(Message):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass  # delete this line and replace with your code here
+        assert type(text) == str, 'CiphertextMessage.__init__: {}, {} is not str type'.format(text, type(text))
+        Message.__init__(self, text)
+
 
     def decrypt_message(self):
         '''
@@ -239,7 +241,32 @@ class CiphertextMessage(Message):
         Returns: a tuple of the best shift value used to decrypt the message
         and the decrypted message text using that shift value
         '''
-        pass  # delete this line and replace with your code here
+        current_key_legal_words = [0, 0]
+        for shift in range(0, 26):
+            #print(f'shift={shift}')
+            decrypted_text = self.apply_shift((26 - shift) % 26)
+            clear_list = [x.strip(string.punctuation) for x in decrypted_text.split()]
+            legal_words_count = 0
+            for item in clear_list:
+                #print(f'item={item}')
+                if is_word(self.valid_words, item):
+                    legal_words_count += 1
+                    if current_key_legal_words[1] <= legal_words_count:
+                        current_key_legal_words[0] = shift
+                        current_key_legal_words[1] = legal_words_count
+                        break
+        return (26 - current_key_legal_words[0]) % 26, self.apply_shift((26 - current_key_legal_words[0]) % 26)
+
+
+def decrypt_story():
+    """
+    decrypt text by using CiphertextMessage.decrypt_message function
+    text: string - encrypted string from file
+    return: result of  CiphertextMessage.decrypt_message() - tuple (key, decrypted text)
+    """
+    text = get_story_string()
+    instance = CiphertextMessage(text)
+    return instance.decrypt_message()
 
 
 # Example test case (PlaintextMessage)

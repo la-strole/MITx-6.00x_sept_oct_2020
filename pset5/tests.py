@@ -10,7 +10,7 @@ def test_build_shift_dict():
     instance - instance of Message class
     """
     instance = Message('123')
-    shift = [0, 1, 10, random.randint(1, 26)]
+    shift = [0, 1, 10, random.randint(1, 25)]
     for item in shift:
         ret = instance.build_shift_dict(item)
         assert type(ret) == dict, 'build_shift_dict: {} is not a dictionary'.format(ret)
@@ -87,3 +87,27 @@ def test_get_encrypting_dict():
 
 print(test_get_shift())
 print(test_get_encrypting_dict())
+
+# unit tests for CiphertextMessage(Message)
+
+def test_decrypt_message():
+    """
+    unit test for decrypt_message function
+    instance - instance of CiphertextMessage(Message)
+    """
+    text = 'some text with commas, for example!'
+    shift = [random.randint(1, 24)]*10
+    shift.extend([0, 25])
+    #print(f'shift={shift}')
+    for key in shift:
+        instance = PlaintextMessage(text, key)
+        encrypted_text = instance.apply_shift(key)
+        instance = CiphertextMessage(encrypted_text)
+        result = instance.decrypt_message()
+        assert  type(result) == tuple, f'test_decrypt_message: type of return value({type(result)} is not tuple)'
+        assert (26 - result[0]) % 26 == key, f'test_decrypt_message: key = {key} is not equal to decrypted {result[0]}'
+        assert result[1] == text, 'test_decrypt_message: {} != {}'.format(result, text)
+    return '-' * 25 + '\ndecrypt_message PASS\n' + '-' * 25
+
+
+print(test_decrypt_message())
