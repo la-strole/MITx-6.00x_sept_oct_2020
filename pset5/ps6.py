@@ -229,8 +229,7 @@ class CiphertextMessage(Message):
         '''
         Decrypt self.message_text by trying every possible shift value
         and find the "best" one. We will define "best" as the shift that
-        creates the maximum number of real words when we use apply_shift(shift)
-        on the message text. If s is the original shift value used to encrypt
+        creates the maximum number of real words when we use apply_shift(shift)       on the message text. If s is the original shift value used to encrypt
         the message, then we would expect 26 - s to be the best shift value 
         for decrypting it.
 
