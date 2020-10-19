@@ -6,6 +6,7 @@ def selection(L:list):
         L.remove(L_copy[-1])
     return L_copy
 
+
 def selection_from_professor(L:list):
     L_copy = L.copy()
     suffixSt = 0
