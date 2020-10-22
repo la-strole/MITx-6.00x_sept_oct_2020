@@ -39,16 +39,17 @@ def greedy_flexible_knapsack(i_vector, maxW, sort_key):
     total_weight = 0
     i = 0
     while total_weight <= maxW:
-        result.append(i_vector_copy[i])
+        if i_vector_copy[i].get_weight() <= maxW - total_weight:
+            result.append(i_vector_copy[i])
         total_weight += i_vector_copy[i].get_weight()
         i += 1
     return result
 
 
 if __name__ == '__main__':
-    names = ['one', 'two', 'tree', 'four', 'five']
-    values = [1, 2, 3, 4, 5]
-    weights = [1, 3, 5, 2, 4]
+    names = ['one', 'two', 'tree', 'four', 'five', 'six']
+    values = [1, 3, 5, 4, 10, 1]
+    weights = [2, 6, 3, 8, 2, 20]
 
     i_Vector = make_I_vector(names, values, weights)
     answer = greedy_flexible_knapsack(i_Vector, maxW=10, sort_key=lambda x: x.get_value())
