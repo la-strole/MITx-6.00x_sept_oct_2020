@@ -1,5 +1,3 @@
-import knapsack_problem
-
 def brute_force_iteration_method(n: list, maximum: int):
     """
     n: list - [(value, weight),...], value, weight - assumes to be int
