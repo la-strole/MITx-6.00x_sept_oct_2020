@@ -59,10 +59,45 @@ right_to_left(753)
 
 def left_to_right(n):
     if n // 10 == 0:
-        print(n, end='')
+        print(n)
         return n % 10
     else:
         return left_to_right(n // 10), left_to_right(n % 10)
 
 
 left_to_right(753)
+
+
+def prime_test(n, m):
+    """
+    n: int - test case for prime
+    m: int - (n - 1) - first divider to test
+    """
+    # base case
+    if m == 1:
+        return 'yes'
+    elif n % m == 0:
+        return 'no'
+    return prime_test(n, m - 1)
+
+
+print(prime_test(16, 15))
+
+
+def factorization(n, divider=2, answer=[1]):
+    """
+    factorization recursive
+    n: int
+    """
+    # base case
+    if n == 1:
+        return answer
+    else:
+        if n % divider == 0:
+            answer.append(divider)
+            return factorization(n//divider, 2, answer)
+        else:
+            return factorization(n, divider+1, answer)
+
+
+print(factorization(11520))
