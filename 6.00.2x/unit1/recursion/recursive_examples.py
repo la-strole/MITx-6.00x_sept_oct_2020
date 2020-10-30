@@ -95,9 +95,23 @@ def factorization(n, divider=2, answer=[1]):
     else:
         if n % divider == 0:
             answer.append(divider)
-            return factorization(n//divider, 2, answer)
+            return factorization(n // divider, 2, answer)
         else:
-            return factorization(n, divider+1, answer)
+            return factorization(n, divider + 1, answer)
 
 
 print(factorization(11520))
+
+
+def palindrom(s: str):
+    # base case
+    if len(s) == 1 or len(s) == 0:
+        return 'yes'
+    elif s[0] != s[-1]:
+        return 'no'
+    else:
+        return palindrom(s[1:-1])
+
+
+print(palindrom('palqap'))
+
