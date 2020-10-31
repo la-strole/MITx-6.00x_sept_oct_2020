@@ -1,9 +1,11 @@
 # edges = [(1, 2), (1, 2), (1, 4), (2, 4), (2, 3), (2, 3), (3, 4)]
-#edges = [(1,2), (1,4), (2,4), (2,3), (3,4)]
+# edges = [(1,2), (1,4), (2,4), (2,3), (3,4)]
 edges = [(1, 2), (1, 2), (1, 4), (2, 4), (2, 3), (3, 4)]
 current_node = 1
 n = [current_node]
 count = [1]
+
+
 def rec_graph(edges, current_node):
     """"
     my code for Kenigsberg bridges problem
@@ -39,6 +41,7 @@ def rec_graph(edges, current_node):
         n.pop()
     return answer
 
+
 print(rec_graph(edges, current_node))
 
 
@@ -52,6 +55,9 @@ class Node:
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return f'Node({self.get_node_name()})'
+
 
 class Edge:
     def __init__(self, src, dest):
@@ -59,7 +65,6 @@ class Edge:
         assert isinstance(dest, Node)
         self.src = src
         self.dest = dest
-
 
     def get_edge(self):
         return f'{self.src.get_node_name}->{self.dest.get_node_name()}'
@@ -76,7 +81,7 @@ class Edge:
 
 class Digraph:
     def __init__(self):
-        self.graph = {} # keys - nodes, values - list of edges
+        self.graph = {}  # keys - nodes, values - list of edges
 
     def add_node(self, node):
         assert isinstance(node, Node)
@@ -122,7 +127,6 @@ class Graph(Digraph):
             self.graph[tmp_src] = [Edge(tmp_src, tmp_dest)]
 
 
-
 g = Graph()
 nodes = [Node(str(x)) for x in range(1, 5)]
 for item in nodes:
@@ -140,3 +144,28 @@ for edge in edges:
     g.add_edge(edge)
 
 print(g)
+
+
+
+def DFS(graph: Graph, start: Node, end: Node, path: list, shortest):
+
+    path = path + [start]  # not path.append() - path = path + [list] - new id
+    #print(path)
+    if start == end:
+        return path
+    for node in graph.children_of(start):
+        if node not in path:
+            if shortest == None or len(path) < len(shortest):
+                newPath = DFS(graph, node, end, path, shortest)
+                if newPath != None:
+                    shortest = newPath
+    return shortest
+
+
+def shortest_path(graph, start, end):
+    return DFS(graph, start, end, [], None)
+
+
+print(shortest_path(g, nodes[0], nodes[3]))
+
+# path остается и в конце он не меняется, те даже когда есть пути в end - все равно не работет
