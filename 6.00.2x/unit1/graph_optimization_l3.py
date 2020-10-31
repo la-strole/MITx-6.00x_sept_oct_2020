@@ -168,4 +168,20 @@ def shortest_path(graph, start, end):
 
 print(shortest_path(g, nodes[0], nodes[3]))
 
-# path остается и в конце он не меняется, те даже когда есть пути в end - все равно не работет
+
+
+def BFS(graph, start, end):
+    initPath = [start]
+    pathQueue = [initPath]
+    while len(pathQueue) != 0:
+        tmp_path = pathQueue.pop(0)
+        lastNode = tmp_path[-1]
+        if lastNode == end:
+            return tmp_path
+        for nextnode in graph.children_of(lastNode):
+            if nextnode not in tmp_path:
+                new_path = tmp_path + [nextnode]
+                pathQueue.append(new_path)
+    return None
+
+print(BFS(g, nodes[0], nodes[3]))
