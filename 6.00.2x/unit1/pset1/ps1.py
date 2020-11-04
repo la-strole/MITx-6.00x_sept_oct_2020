@@ -4,9 +4,10 @@
 from ps1_partition import get_partitions
 import time
 
-#================================
+
+# ================================
 # Part A: Transporting Space Cows
-#================================
+# ================================
 
 def load_cows(filename):
     """
@@ -24,7 +25,7 @@ def load_cows(filename):
     cow_dict = dict()
 
     f = open(filename, 'r')
-    
+
     for line in f:
         line_data = line.split(',')
         cow_dict[line_data[0]] = int(line_data[1])
@@ -32,7 +33,7 @@ def load_cows(filename):
 
 
 # Problem 1
-def greedy_cow_transport(cows,limit=10):
+def greedy_cow_transport(cows, limit=10):
     """
     Uses a greedy heuristic to determine an allocation of cows that attempts to
     minimize the number of spaceship trips needed to transport all the cows. The
@@ -54,12 +55,27 @@ def greedy_cow_transport(cows,limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    start_time = time.time()
+    cows_copy = cows.copy()
+    for cow in cows_copy:
+        if cows_copy[cow] > limit:
+            del cows_copy[cow]
+    result = []
+    while len(cows_copy) != 0:
+        trip = []
+        free_space = limit
+        for cow in sorted(cows_copy, key=lambda x: cows_copy[x], reverse=True):
+            if cows_copy[cow] < free_space:
+                trip.append(cow)
+                free_space -= cows_copy[cow]
+                del cows_copy[cow]
+        result.append(trip)
+    end_time = time.time()
+    return (end_time-start_time), result
 
 
 # Problem 2
-def brute_force_cow_transport(cows,limit=10):
+def brute_force_cow_transport(cows, limit=10):
     """
     Finds the allocation of cows that minimizes the number of spaceship trips
     via brute force.  The brute force algorithm should follow the following method:
@@ -79,10 +95,27 @@ def brute_force_cow_transport(cows,limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    start_time = time.time()
+    answer = []
+    min_trip_number = len(cows.keys())
+    trip_generator = get_partitions(cows.keys())
+    while True:
+        try:
+            trip_variant = next(trip_generator)
+            is_ok = True
+            for trip in trip_variant:
+                is_ok = is_ok and (sum([cows[name] for name in trip]) <= limit)
+            if is_ok:
+                if len(trip_variant) <= min_trip_number:
+                    min_trip_number = len(trip_variant)
+                    answer = trip_variant
+        except StopIteration:
+            end_time = time.time()
+            return (end_time - start_time), answer
 
-        
+
+
+
 # Problem 3
 def compare_cow_transport_algorithms():
     """
@@ -108,10 +141,8 @@ lines to print the result of your problem.
 """
 
 cows = load_cows("ps1_cow_data.txt")
-limit=100
+limit = 10
 print(cows)
 
 print(greedy_cow_transport(cows, limit))
 print(brute_force_cow_transport(cows, limit))
-
-
