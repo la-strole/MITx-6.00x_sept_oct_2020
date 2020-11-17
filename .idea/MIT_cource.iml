@@ -5,8 +5,9 @@
       <sourceFolder url="file://$MODULE_DIR$/6.00.2x/unit1" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/6.00.2x/unit1/pset1" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/6.00.2x/unit2/pset2" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.9 (MIT_cource)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

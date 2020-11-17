@@ -7,8 +7,9 @@ import time
 
 from tkinter import *
 
+
 class RobotVisualization:
-    def __init__(self, num_robots, width, height, delay = 0.2):
+    def __init__(self, num_robots, width, height, delay=0.2):
         "Initializes a visualization with the specified parameters."
         # Number of seconds to pause after each frame
         self.delay = delay
@@ -27,7 +28,7 @@ class RobotVisualization:
         # Draw a backing and lines
         x1, y1 = self._map_coords(0, 0)
         x2, y2 = self._map_coords(width, height)
-        self.w.create_rectangle(x1, y1, x2, y2, fill = "white")
+        self.w.create_rectangle(x1, y1, x2, y2, fill="white")
 
         # Draw gray squares for dirty tiles
         self.tiles = {}
@@ -36,7 +37,7 @@ class RobotVisualization:
                 x1, y1 = self._map_coords(i, j)
                 x2, y2 = self._map_coords(i + 1, j + 1)
                 self.tiles[(i, j)] = self.w.create_rectangle(x1, y1, x2, y2,
-                                                             fill = "gray")
+                                                             fill="gray")
 
         # Draw gridlines
         for i in range(width + 1):
@@ -59,7 +60,7 @@ class RobotVisualization:
         "Returns an appropriate status string to print."
         percent_clean = round(100 * num_clean_tiles / (self.width * self.height))
         return "Time: %04d; %d tiles (%d%%) cleaned" % \
-            (time, num_clean_tiles, percent_clean)
+               (time, num_clean_tiles, percent_clean)
 
     def _map_coords(self, x, y):
         "Maps grid positions to window positions (in pixels)."
@@ -98,7 +99,7 @@ class RobotVisualization:
             x1, y1 = self._map_coords(x - 0.08, y - 0.08)
             x2, y2 = self._map_coords(x + 0.08, y + 0.08)
             self.robots.append(self.w.create_oval(x1, y1, x2, y2,
-                                                  fill = "black"))
+                                                  fill="black"))
             self.robots.append(
                 self._draw_robot(robot.getRobotPosition(), robot.getRobotDirection()))
         # Update text
@@ -113,4 +114,3 @@ class RobotVisualization:
     def done(self):
         "Indicate that the animation is done so that we allow the user to close the window."
         mainloop()
-

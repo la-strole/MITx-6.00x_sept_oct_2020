@@ -15,7 +15,7 @@ import pylab
 # If you get a "Bad magic number" ImportError, you are not using Python 3.5 
 
 # For Python 3.6:
-from ps2_verify_movement36 import testRobotMovement
+from ps2_verify_movement39 import testRobotMovement
 
 
 # If you get a "Bad magic number" ImportError, you are not using Python 3.6
@@ -183,12 +183,15 @@ class Robot(object):
         speed: a float (speed > 0)
         """
         assert isinstance(room, RectangularRoom)
-        assert type(speed) == float and speed > 0
+        # assert type(speed) == float and speed > 0, 'speed={}'.format(speed)
+        self.room = room
         # start position - Position instance
         self.position = room.getRandomPosition()
         self.speed = speed
         # clockwalk from the North
         self.direction = random.randrange(0, 360)
+        # clean start position
+        self.room.cleanTileAtPosition(self.position)
 
     def getRobotPosition(self):
         """
@@ -252,11 +255,17 @@ class StandardRobot(Robot):
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
-        raise NotImplementedError
+        self.room.cleanTileAtPosition(self.getRobotPosition())
+        new_position = self.position.getNewPosition(self.getRobotDirection(), self.speed)
+        # if new position in the room
+        if self.room.isPositionInRoom(new_position):
+            self.setRobotPosition(new_position)
+        else:
+            self.direction = random.randrange(0, 360)
 
 
 # Uncomment this line to see your implementation of StandardRobot in action!
-##testRobotMovement(StandardRobot, RectangularRoom)
+#testRobotMovement(StandardRobot, RectangularRoom)
 
 
 # === Problem 4
@@ -278,11 +287,35 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
     robot_type: class of robot to be instantiated (e.g. StandardRobot or
                 RandomWalkRobot)
     """
-    raise NotImplementedError
+    assert type(num_robots) == int and num_robots > 0
+    assert type(width) == int and width > 0
+    assert type(height) == int and height > 0
+    assert type(min_coverage) == float and 0 <= min_coverage <= 1.0
+    assert type(num_trials) == int and num_trials > 0
+    answer = []
+    for trial in range(num_trials):
 
+        #anim = ps2_visualize.RobotVisualization(num_robots, width, height)
 
+        room = RectangularRoom(width, height)
+        tiles_to_clean = int(room.getNumTiles() * min_coverage)
+        # initialize robots at the room
+        robots = [robot_type(room, speed) for x in range(num_robots)]
+        # initialize clock
+        clock = 0
+        cleaned_tiles = 0
+        while cleaned_tiles <= tiles_to_clean:
+            # move robots
+            for robot in robots:
+                # anim.update(room, robots)
+                robot.updatePositionAndClean()
+            cleaned_tiles = room.getNumCleanedTiles()
+            clock += 1
+        answer.append(clock)
+        # anim.done()
+    return sum(answer) / len(answer) if answer else 0
 # Uncomment this line to see how much your simulation takes on average
-##print(runSimulation(1, 1.0, 10, 10, 0.75, 30, StandardRobot))
+print(runSimulation(1, 2.0, 15, 13, 0.98, 30, StandardRobot))
 
 
 # === Problem 5
@@ -299,8 +332,14 @@ class RandomWalkRobot(Robot):
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
-        raise NotImplementedError
-
+        self.room.cleanTileAtPosition(self.getRobotPosition())
+        new_position = self.position.getNewPosition(self.getRobotDirection(), self.speed)
+        # if new position in the room
+        if self.room.isPositionInRoom(new_position):
+            self.setRobotPosition(new_position)
+            self.direction = random.randrange(0, 360)
+        else:
+            self.direction = random.randrange(0, 360)
 
 def showPlot1(title, x_label, y_label):
     """
@@ -353,10 +392,11 @@ def showPlot2(title, x_label, y_label):
 #
 #       (... your call here ...)
 #
-
+#showPlot1(title='times to clear room', x_label='number of robots', y_label='time')
 #
 # 2) Write a function call to showPlot2 that generates an appropriately-labeled
 #     plot.
 #
 #       (... your call here ...)
 #
+showPlot2(title='difference of cleaning time from w/h ratio', x_label='w/h ratio', y_label='times')
