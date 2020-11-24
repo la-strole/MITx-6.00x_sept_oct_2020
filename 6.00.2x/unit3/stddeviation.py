@@ -71,13 +71,71 @@ def prove_imeristic_rule():
         return scipy.integrate.quad(gauss_function, minimum, maximum)
 
     # 1. 68% of data whiting +- stddev from mean
-    result.append(find_probability(mean-stddev, mean+stddev)[0])
+    result.append(find_probability(mean - stddev, mean + stddev)[0])
     # 2. 95% of data whiting +- 2*stddev from mean
-    result.append(find_probability(mean - 1.96*stddev, mean + 1.96*stddev)[0])
+    result.append(find_probability(mean - 1.96 * stddev, mean + 1.96 * stddev)[0])
     # 3. 99.7% of data withing +- 3*stddev
-    result.append(find_probability(mean - 3*stddev, mean + 3*stddev)[0])
+    result.append(find_probability(mean - 3 * stddev, mean + 3 * stddev)[0])
     return result
 
-plot_PDF_random(100000)
-print(prove_imeristic_rule())
 
+def prove_CLT():
+    population = [random.randint(0, 100) for x in range(10 ** 6)]
+
+    samples_count = 10
+    sample_length = 10
+
+    means = []
+    for i in range(samples_count):
+        sample = [random.choice(population) for x in range(sample_length)]
+        sample_mean = sum(sample) / len(sample)
+        means.append(sample_mean)
+
+    # check if means is normally distributed
+    # draw population distribution and sample distribution
+    hist_size = 20
+
+    plt.subplot(2, 1, 1)
+    plt.xlabel('set of means')
+    plt.ylabel('probability')
+    plt.hist(population, hist_size, weights=[1 / len(population) for x in range(len(population))])
+
+    plt.subplot(2, 1, 2)
+    plt.xlabel('set of means')
+    plt.ylabel('probability')
+    plt.title(f'PDF of CLT. size of sample - {sample_length}, number of samples - {samples_count}')
+    plt.hist(means, hist_size, weights=[1 / len(means) for x in range(len(means))])
+    plt.show()
+
+    # this distribution will have mean close to the mean of population
+    samples_mean = sum(means) / len(means)
+    population_mean = sum(population) / len(population)
+    print(f'mean of population = {population_mean}\n'
+          f'mean of sample  = {samples_mean}')
+
+    # the variance of the samples will be close to the variance of the population divided by the sample size
+    variance_of_sample = sum([(x - samples_mean) ** 2 for x in means]) / sum(means)
+    variance_of_popoulation = sum([(x - population_mean) ** 2 for x in population]) / sum(population)
+    print(f'variance of the means = {variance_of_sample}\n'
+          f'variance of population = {variance_of_popoulation}\n'
+          f'variance of population divided by the sample size = {variance_of_popoulation / sample_length}')
+
+
+def Buffon_laplas_pi_proof():
+    number_needles = 10 ** 3
+    inside = 0
+    outside_inside = number_needles
+    for i in range(number_needles):
+        x = random.random()
+        y = random.random()
+        if ((x ** 2) + (y ** 2)) <= 1:
+            inside += 1
+    print(f'inside = {inside}, outside+inside={outside_inside}')
+    pi_by_Buffon = (4 * inside) / outside_inside
+    return pi_by_Buffon
+
+
+# plot_PDF_random(100000)
+# print(prove_imeristic_rule())
+# prove_CLT()
+print(Buffon_laplas_pi_proof())
