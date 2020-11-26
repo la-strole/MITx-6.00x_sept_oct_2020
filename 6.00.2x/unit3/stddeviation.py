@@ -82,8 +82,8 @@ def prove_imeristic_rule():
 def prove_CLT():
     population = [random.randint(0, 100) for x in range(10 ** 6)]
 
-    samples_count = 10
-    sample_length = 10
+    samples_count = 100
+    sample_length = 1000
 
     means = []
     for i in range(samples_count):
@@ -121,8 +121,8 @@ def prove_CLT():
           f'variance of population divided by the sample size = {variance_of_popoulation / sample_length}')
 
 
-def Buffon_laplas_pi_proof():
-    number_needles = 10 ** 3
+# -----------------------------------------------------------------------------------------------------------------------
+def Buffon_laplas_pi_proof(number_needles=10 ** 3):
     inside = 0
     outside_inside = number_needles
     for i in range(number_needles):
@@ -130,12 +130,74 @@ def Buffon_laplas_pi_proof():
         y = random.random()
         if ((x ** 2) + (y ** 2)) <= 1:
             inside += 1
-    print(f'inside = {inside}, outside+inside={outside_inside}')
+    # print(f'inside = {inside}, outside+inside={outside_inside}')
     pi_by_Buffon = (4 * inside) / outside_inside
     return pi_by_Buffon
 
 
+def get_Est(num_needles, num_trials):
+    est = []
+    for i in range(num_trials):
+        est.append(Buffon_laplas_pi_proof(num_needles))
+    cur_est = sum(est) / len(est)
+    deviation = stddev(est)
+    print(f'number of needles - {num_needles}\nnumber of trials = {num_trials}\nest_pi = {cur_est}\n'
+          f'standard deviation - {round(deviation, 6)}')
+    return cur_est, deviation
+
+
+def pi_by_buffon(precision, num_trials):
+    num_needles = 1000
+    sdev = precision
+    cur_pi = None
+    while sdev >= precision / 1.96:
+        cur_pi, sdev = get_Est(num_needles, num_trials)
+        num_needles *= 2
+    return cur_pi
+
+#---------------------------------------------------------------------------------------------------------------------
+def noReplacementSimulation(numTrials):
+    '''
+    Runs numTrials trials of a Monte Carlo simulation
+    of drawing 3 balls out of a bucket containing
+    3 red and 3 green balls. Balls are not replaced once
+    drawn. Returns the a decimal - the fraction of times 3
+    balls of the same color were drawn.
+    '''
+    # Your code here
+    bingo = 0
+    for trial in range(numTrials):
+        bucket = ['r', 'r', 'r', 'g', 'g', 'g']
+        hand = ''
+        for i in range(3):
+            ball = random.choice(bucket)
+            # print(ball, bucket)
+            if hand == '':
+                hand = ball
+            if ball != hand:
+                break
+            bucket.remove(ball)
+        else:
+            bingo += 1
+    return bingo / numTrials
+
+
+def find_probability(precision, num_trials):
+    sample_len = 100
+    deviation = precision
+    while deviation >= precision / 1.96:
+        sample = []
+        for i in range(sample_len):
+            sample.append(noReplacementSimulation(num_trials))
+            mean = sum(sample) / len(sample)
+            deviation = stddev(sample)
+        print(f'probability = {mean}, standard deviation = {deviation}, sample_len = {num_trials}')
+        num_trials *= 2
+
 # plot_PDF_random(100000)
 # print(prove_imeristic_rule())
-# prove_CLT()
-print(Buffon_laplas_pi_proof())
+prove_CLT()
+# get_Est(10**3, 100)
+# pi_by_buffon(0.0005, 100)
+# print(noReplacementSimulation(10000))
+# #print(find_probability(0.005, 100))
