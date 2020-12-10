@@ -275,9 +275,10 @@ class ResistantVirus(SimpleVirus):
         """
 
         assert type(drug) == str
-        assert drug in self.getResistances().keys()
-
-        return self.getResistances()[drug]
+        #assert drug in self.getResistances().keys()
+        if drug in self.getResistances().keys():
+            return self.getResistances()[drug]
+        return False
 
     def reproduce(self, popDensity, activeDrugs):
         """
@@ -323,10 +324,11 @@ class ResistantVirus(SimpleVirus):
         maxBirthProb and clearProb values as this virus. Raises a
         NoChildException if this virus particle does not reproduce.
         """
-        assert type(popDensity) == float
+        #assert type(popDensity) == float
         assert type(activeDrugs) == list
-        for drug in activeDrugs:
-            assert drug in self.getResistances().keys()
+        if activeDrugs:
+            for drug in activeDrugs:
+                assert drug in self.getResistances().keys()
 
         if all([self.getResistances()[drug] for drug in activeDrugs]):
             if random.random() <= self.maxBirthProb * (1 - popDensity):
@@ -337,7 +339,6 @@ class ResistantVirus(SimpleVirus):
                 return ResistantVirus(self.getMaxBirthProb(), self.getClearProb(), resistance_child, self.getMutProb())
 
         raise NoChildException
-
 
 
 class TreatedPatient(Patient):
@@ -407,6 +408,19 @@ class TreatedPatient(Patient):
             virus - instance of ResistantVirus()
             """
             assert isinstance(virus, ResistantVirus)
+            answer = []
+            for drug in drugResist:
+                answer.append(virus.getResistances()[drug])
+            if all(answer):
+                return True
+            return False
+
+        resistant_number = 0
+        for virus in self.getViruses():
+            if virus_drugResist(virus):
+                resistant_number += 1
+
+        return resistant_number
 
 
     def update(self):
@@ -430,8 +444,18 @@ class TreatedPatient(Patient):
         integer)
         """
 
-        # TODO
+        survive_viruses = [alive_virus for alive_virus in self.getViruses() if not alive_virus.doesClear()]
+        population_density = len(survive_viruses) / self.getMaxPop()
+        offspring = []
+        for virus in survive_viruses:
+            try:
+                virus.reproduce(population_density, self.getPrescriptions())
+                offspring.append(virus)
+            except NoChildException:
+                continue
 
+        self.viruses = survive_viruses + offspring
+        return len(self.getViruses())
 
 #
 # PROBLEM 4
